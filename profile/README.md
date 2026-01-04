@@ -37,9 +37,23 @@ Aqui é onde a curiosidade vira código. Criamos projetos por diversão, explora
 
 ## 🤝 Filosofia
 
-> *"Não fazemos por dinheiro, fazemos por diversão."*
+> *"Criamos por diversão e compartilhamos de graça."*
 
-Todos os projetos aqui são criados por hobby e paixão. Acreditamos que o melhor código nasce da curiosidade.
+Todos os projetos aqui são feitos por hobby e paixão. Acreditamos que o melhor código nasce da curiosidade.
+
+---
+
+## ☕ Apoie o projeto
+
+Nossos projetos são **100% gratuitos** e sempre serão. Se algo que criamos te ajudou e você quiser retribuir, considere pagar um café!
+
+<div align="center">
+
+[![Donate with PayPal](https://img.shields.io/badge/Donate-PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://www.paypal.com/donate/?business=ZUADM4SZT5DC8&no_recurring=0&item_name=Projetos+desenvolvidos+com+cuidado+e+dedica%C3%A7%C3%A3o.+O+apoio+incentiva+a+continuidade+e+a+evolu%C3%A7%C3%A3o+constante.&currency_code=BRL)
+
+*Qualquer valor é bem-vindo e nos motiva a continuar criando!* 💙
+
+</div>
 
 ---
 
