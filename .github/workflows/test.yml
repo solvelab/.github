@@ -1,0 +1,20 @@
+name: "Tests"
+
+# Testes do script de retenção do GHCR (solvelab/.github#1), com a API e o registro falsos.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  unittest:
+    name: "Retention script tests"
+    # Repositório público: o grupo de runners do cluster não atende repositório público.
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 -m unittest discover -s tests -v

@@ -1,0 +1,73 @@
+name: "GHCR retention"
+
+# Mantém as N versões COM TAG mais recentes de uma imagem do GHCR, com os manifestos que elas usam
+# (plataformas e atestações do buildx), e apaga o resto (solvelab/.github#1). Chamado pelo CI de cada
+# repositório logo depois do push da imagem, como o `prune-releases` do `solvelab/whisperi` (#82).
+#
+# O trabalho fica em `scripts/ghcr-retention.py`, o mesmo que roda na máquina de quem mantém para uma
+# poda avulsa. Ver README.md desta pasta para o uso e o porquê de não usar
+# `actions/delete-package-versions`.
+#
+# O token automático do repositório chamador basta: o repositório que publica a imagem tem papel de
+# admin nela. O job inteiro tem `continue-on-error`: uma falha na poda vira aviso e não derruba a
+# entrega, como o `prune-builds` do whisperi (#84); o push da imagem já aconteceu antes. O script vem
+# do mesmo commit deste fluxo (`job.workflow_sha`), então quem fixa uma versão do fluxo roda o script
+# daquela versão.
+
+on:
+  workflow_call:
+    inputs:
+      package:
+        description: "Nome da imagem no GHCR, sem o dono (ex.: feldt)"
+        required: true
+        type: string
+      keep:
+        description: "Quantas versões com tag mais recentes manter"
+        required: false
+        type: number
+        default: 5
+      tag-pattern:
+        description: "Regex das tags que entram na contagem; versões de outra família de tag ficam intactas (padrão: todas)"
+        required: false
+        type: string
+        default: ""
+      runner:
+        description: "Runner do job (o do CI chamador; padrão: o runner do cluster)"
+        required: false
+        type: string
+        default: k8s-runner
+      dry-run:
+        description: "Só lista o que seria apagado"
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  packages: write
+
+jobs:
+  retention:
+    name: "Keep the latest ${{ inputs.keep }} of ${{ inputs.package }}"
+    runs-on: ${{ inputs.runner }}
+    timeout-minutes: 5
+    continue-on-error: true
+    # Duas podas da mesma imagem ao mesmo tempo: uma apagaria enquanto a outra pagina a lista.
+    concurrency:
+      group: ghcr-retention-${{ github.repository_owner }}-${{ inputs.package }}
+      cancel-in-progress: false
+    steps:
+      # A imagem do runner do cluster pode vir sem Python (o script só usa a biblioteca padrão).
+      - run: command -v python3 >/dev/null || (sudo apt-get update -qq && sudo apt-get install -y -qq python3 >/dev/null)
+      - name: "Fetch the script"
+        run: >-
+          curl -fsSL --retry 3 -o ghcr-retention.py
+          "https://raw.githubusercontent.com/solvelab/.github/${{ job.workflow_sha || 'main' }}/scripts/ghcr-retention.py"
+      - name: "Apply retention"
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ORG: ${{ github.repository_owner }}
+          PACKAGE: ${{ inputs.package }}
+          KEEP: ${{ inputs.keep }}
+          TAG_PATTERN: ${{ inputs.tag-pattern }}
+          DRY_RUN: ${{ inputs.dry-run }}
+        run: python3 ghcr-retention.py
