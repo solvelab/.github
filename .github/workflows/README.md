@@ -20,7 +20,7 @@ Chamada, no `ci.yml` do repositório que publica a imagem, com `needs:` no job q
       package: <nome-da-imagem>
 ```
 
-`keep` muda a quantidade e `dry-run: true` só lista. `tag-pattern` é para o pacote que guarda mais de
+`keep` muda a quantidade, `dry-run: true` só lista e `runner` troca o runner (padrão `k8s-runner`; quem roda o CI em `ubuntu-latest` passa o mesmo). `tag-pattern` é para o pacote que guarda mais de
 uma família de tag: só as tags que casam entram na contagem, e as outras ficam intactas. O `octopus`
 usa `^(v[0-9]|latest$)`, porque a imagem da sonda `octopus:probe-*` é fixada por digest no código.
 O log mostra as tags mantidas e a contagem `<imagem>: N versões · mantém M (5 com tag) · apaga K`.

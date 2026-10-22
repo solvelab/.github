@@ -31,6 +31,11 @@ on:
         required: false
         type: string
         default: ""
+      runner:
+        description: "Runner do job (o do CI chamador; padrão: o runner do cluster)"
+        required: false
+        type: string
+        default: k8s-runner
       dry-run:
         description: "Só lista o que seria apagado"
         required: false
@@ -43,7 +48,7 @@ permissions:
 jobs:
   retention:
     name: "Keep the latest ${{ inputs.keep }} of ${{ inputs.package }}"
-    runs-on: k8s-runner
+    runs-on: ${{ inputs.runner }}
     timeout-minutes: 5
     continue-on-error: true
     # Duas podas da mesma imagem ao mesmo tempo: uma apagaria enquanto a outra pagina a lista.
