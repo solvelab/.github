@@ -1,0 +1,20 @@
+name: "Tests"
+
+# Testes do script de retenção do GHCR (solvelab/.github#1), com a API e o registro falsos.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  unittest:
+    name: "Retention script tests"
+    runs-on: k8s-runner
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - run: command -v python3 >/dev/null || (sudo apt-get update -qq && sudo apt-get install -y -qq python3 >/dev/null)
+      - run: python3 -m unittest discover -s tests -v
